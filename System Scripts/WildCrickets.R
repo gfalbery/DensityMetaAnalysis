@@ -1,0 +1,437 @@
+
+# WildCrickets ####
+
+library(tidyverse); library(zip); library(data.table); library(ggregplot); library(magrittr); library(igraph)
+library(adehabitatHR); library(rgeos); library(glue); library(cowplot); library(patchwork); library(readxl)
+library(fs); library(tidygraph)
+
+theme_set(theme_cowplot() + theme(strip.background = element_rect(fill = "white")))
+
+FocalSystem <- "WildCrickets"
+
+Root <- paste0("Datasets/", FocalSystem)
+
+dir_create(paste0(Root, "/Intermediate"))
+dir_create(paste0(Root, "/Output"))
+
+# Importing data ####
+
+Files <- 
+  Root %>% 
+  dir_ls(regex = ".xlsx")
+
+# Root %>% dir_ls(regex = ".zip") %>% unzip(exdir = Root)
+
+# FileList <- Root %>% dir_ls(regex = ".csv$") %>% map(read.csv)
+
+FileList <- 
+  Files %>% 
+  excel_sheets() %>% 
+  purrr::set_names() %>% 
+  map(read_excel, path = Files) %>% 
+  map(data.frame) %>% 
+  map(~.x %>% rename_all(function(a) str_replace_all(a, "[.]", "_")))
+
+names(FileList) %<>% str_replace_all(" ", "_")
+
+Burrows <- FileList$Burrows %>% filter(Y > -2)
+
+Contacts <- FileList$ID_Interactions
+
+Locations <- FileList$ID_Locations# %>% 
+# dplyr::select(-X) %>% 
+# rename_all(CamelConvert) %>% 
+# rename(X = Longitude, Y = Latitude) 
+
+Locations %<>% left_join(Burrows, by = c("Season", "Burrow"))
+
+# Locations %<>% mutate_at("cow_id", ~str_remove_all(.x, "[a-zA-Z]") %>% 
+#                           as.numeric)
+# 
+# Cows %<>% mutate_at("GPS", ~str_remove_all(.x, "[a-zA-Z]") %>% 
+#                       as.numeric)
+
+Locations %<>%
+  #   rename_all(~str_replace_all(.x, " ", "_")) %>% 
+  mutate(X = X/1000, Y = Y/1000)
+#   mutate(X = X - min(X), Y = Y - min(Y)) # Remember to put it in kilometres!!!!!!!!
+
+Contacts %<>% rename(Year = Season)
+Locations %<>% rename(Year = Season)
+
+Contacts$Event <- ifelse(str_detect(Contacts$Event, "f|F"), "Fight", "Mate")
+
+# Contacts %<>% filter(Event == "Fight")
+# Contacts %<>% filter(Event == "Mate")
+
+# Social Phase ####
+
+AMList <- list()
+
+# Contacts$Site <- Contacts$farm_id
+
+GraphList <- 
+  Contacts$Year %>% unique %>% sort %>% 
+  map(function(a){
+    
+    Contacts %>% 
+      filter(Year == a, Event == "Fight") %>% 
+      dplyr::select(ID, PartnerID, Event, Date) %>%
+      # dplyr::select(cow_id1, cow_id2) %>% 
+      # as.matrix %>% 
+      graph_from_data_frame(directed = F) %>% 
+      as_tbl_graph
+    
+  })
+
+AdjList <- GraphList %>% 
+  map(get.adjacency) %>% 
+  map(function(a){
+    
+    a <- as.matrix(a)
+    
+    diag(a) <- 0
+    
+    Observations <- rowSums(a)
+    
+    diag(a) <- Observations
+    
+    a %>% return
+    
+  })
+
+names(AdjList) <- Contacts$Year %>% unique %>% sort
+
+AdjList %>% saveRDS(glue("Datasets/{FocalSystem}/Intermediate/AMList_Fight.rds"))
+
+AMList2 <- list()
+
+# Contacts$Site <- Contacts$farm_id
+
+GraphList <- 
+  Contacts$Year %>% unique %>% sort %>% 
+  map(function(a){
+    
+    Contacts %>% 
+      filter(Year == a, Event == "Mate") %>% 
+      dplyr::select(ID, PartnerID, Event, Date) %>%
+      # dplyr::select(cow_id1, cow_id2) %>% 
+      # as.matrix %>% 
+      graph_from_data_frame(directed = F) %>% 
+      as_tbl_graph
+    
+  })
+
+AdjList2 <- GraphList %>% 
+  map(get.adjacency) %>% 
+  map(function(a){
+    
+    a <- as.matrix(a)
+    
+    diag(a) <- 0
+    
+    Observations <- rowSums(a)
+    
+    diag(a) <- Observations
+    
+    a %>% return
+    
+  })
+
+names(AdjList2) <- Contacts$Year %>% unique %>% sort
+
+AdjList2 %>% saveRDS(glue("Datasets/{FocalSystem}/Intermediate/AMList_Mate.rds"))
+
+# Deriving stuff ####
+
+Censuses <- Locations# %>% left_join(Cows %>% rename(Id = prox_id))
+
+# Making data frame
+
+ObservationDF <- Censuses %>% 
+  # dplyr::select(-Site) %>% 
+  dplyr::select(Id = ID, X, Y, Year) %>% 
+  na.omit
+
+ObservationDF %>% saveRDS(glue("Datasets/{FocalSystem}/Intermediate/ObservationDF.rds"))
+
+FocalYears <- 
+  ObservationDF$Year %>% unique %>% sort
+
+Censuses %>% group_by(Year) %>% count %>% filter(n>50) %>% 
+  dplyr::select(-c("n")) -> FocalSubdivisions
+
+1:nrow(FocalSubdivisions) %>% 
+  map(~ObservationDF %>% semi_join(FocalSubdivisions[.x,], by = c("Year"))) -> 
+  GroupList
+
+GroupList %>% bind_rows() %>% nrow
+
+# Spatial Phase ####
+
+# Making Centroids ####
+
+ObservationDF %>% group_by(Year, Id) %>% 
+  summarise_at(c("X", "Y"), ~mean(.x, na.rm = T)) ->
+  AnnualCentroids
+
+AnnualCentroids %>% group_by(Id) %>% 
+  summarise_at(c("X", "Y"), ~mean(.x, na.rm = T)) ->
+  LifetimeCentroids
+
+ObservationDF %>% group_by(Year, Id) %>% count(name = "Obs") %>% 
+  left_join(AnnualCentroids, .) -> AnnualCentroids
+
+ObservationDF %>% group_by(Id) %>% count(name = "Obs") %>% 
+  left_join(LifetimeCentroids, .) -> LifetimeCentroids
+
+# Making Densities 
+
+SPDF <- SpatialPointsDataFrame(data = LifetimeCentroids[,c("X", "Y")], 
+                               coords = LifetimeCentroids[,c("X", "Y")])
+
+MetreDims <- 
+  LifetimeCentroids[,c("X", "Y")] %>% 
+  map_dbl(c(range, diff)) %>% 
+  multiply_by(1000) %>% 
+  ceiling
+
+LifetimeCentroids[,c("X", "Y")] %>% 
+  rename_all(tolower) %>% raster::extent() %>% 
+  raster::raster(ncols = MetreDims[["X"]], 
+                 nrows = MetreDims[["Y"]]) -> BlankRaster
+
+LifetimeKUDL <- kernelUD(SPDF, 
+                         extent = 0,
+                         same4all = TRUE, 
+                         grid = 500)
+
+KUDLRaster <- LifetimeKUDL %>% raster::raster()
+
+KUDLRaster <- raster::resample(KUDLRaster, BlankRaster)
+
+raster::values(KUDLRaster) <- 
+  raster::values(KUDLRaster)*nrow(LifetimeCentroids)/
+  sum(raster::values(KUDLRaster), na.rm = T)
+
+AnnualCentroids %>% 
+  arrange(Year) %>% pull(Year) %>% 
+  unique %>% as.character -> FocalSites
+
+AnnualCentroids %>% group_by(Year) %>% count %>% 
+  # filter(n>50) %>% 
+  pull(Year) %>% 
+  intersect(FocalSites) ->
+  FocalSites
+
+SubCentroids <- AnnualCentroids %>% filter(Year %in% FocalSites)
+
+SPDF <- SpatialPointsDataFrame(data = SubCentroids[,c("X", "Y", "Year")], 
+                               coords = SubCentroids[,c("X", "Y")])
+
+SPDF <- SPDF[,"Year"]
+
+KUDL <- kernelUD(SPDF, 
+                 extent = 0,
+                 same4all = TRUE, 
+                 grid = 500)
+
+1:length(FocalSites) %>% lapply(function(a){
+  
+  print(FocalSites[a])
+  
+  DF <- AnnualCentroids %>% filter(Year == FocalSites[a])
+  
+  KUDL2 <- KUDL[[FocalSites[a]]]
+  
+  KUDLRaster <- KUDL2 %>% raster::raster() 
+  
+  KUDLRaster <- raster::resample(KUDLRaster, BlankRaster)
+  
+  raster::values(KUDLRaster) <-
+    raster::values(KUDLRaster)*nrow(DF)/
+    sum(raster::values(KUDLRaster), na.rm = T)
+  
+  KUDLRaster %>% 
+    raster::extract(DF[,c("X", "Y")]) ->
+    DF$Density.Annual
+  
+  return(DF)
+  
+}) -> DensityList
+
+DensityList %>% bind_rows -> AnnualCentroids
+
+NodeDF <- 
+  AnnualCentroids
+
+NodeDF %>% saveRDS(glue("Datasets/{FocalSystem}/Intermediate/NodeData.rds"))
+
+# Adding Social nodes to Spatial nodes ####
+
+AMList <- AdjList
+AMList2 <- AdjList2
+
+AMList %>% 
+  map(~data.frame(Associations = rowSums(.x), 
+                  Strength = .x %>% ProportionalMatrix(Observations = diag(.x)) %>% rowSums,
+                  Degree = rowSums(DegreeGet(.x)),
+                  Observations = diag(.x)) %>% 
+        rownames_to_column("Id") %>% 
+        mutate_at("Id", as.numeric)) %>% 
+  bind_rows(.id = "Year") %>% mutate_at("Year", as.numeric) -> SocialNodeTraits
+
+AMList2 %>% 
+  map(~data.frame(Associations = rowSums(.x), 
+                  Strength = .x %>% ProportionalMatrix(Observations = diag(.x)) %>% rowSums,
+                  Degree = rowSums(DegreeGet(.x)),
+                  Observations = diag(.x)) %>% 
+        rownames_to_column("Id") %>% 
+        mutate_at("Id", as.numeric)) %>% 
+  bind_rows(.id = "Year") %>% mutate_at("Year", as.numeric) -> SocialNodeTraits2
+
+SocialNodeTraits %<>%
+  full_join(NodeDF, by = c("Id", "Year")) %>% 
+  mutate(ContactType = "Fight") %>% 
+  mutate_at(paste0(c("Associations", "Strength", "Degree", "Observations")),
+            ~replace_na(.x, 0)) %>% 
+  bind_rows(SocialNodeTraits2 %<>%
+              full_join(NodeDF) %>% 
+              mutate(ContactType = "Mate") %>% 
+              mutate_at(paste0(c("Associations", "Strength", "Degree", "Observations")),
+                        ~replace_na(.x, 0)))
+
+NodeDF <- SocialNodeTraits
+
+NodeDF %>% saveRDS(glue("Datasets/{FocalSystem}/Intermediate/NodeData.rds"))
+
+# Making Distance Matrices ####
+
+LifetimeDistance <-
+  LifetimeCentroids[,c("X", "Y")] %>% 
+  GristMatrix(LifetimeCentroids$Id)
+
+FocalSites %>% map(function(a){
+  
+  SubDF <- AnnualCentroids %>% filter(Year == a) 
+  
+  SubMat <- SubDF %>% 
+    dplyr::select(X, Y) %>% 
+    GristMatrix(SubDF$Id)
+  
+  SubMat
+  
+}) -> AnnualDistances
+
+# Making Space Use Matrices ####
+
+HROList <- AreaList <- MCPListList <- list()
+
+for(i in FocalSites){
+  
+  print(i)
+  
+  MCPIndividuals <- ObservationDF %>% 
+    filter(Year == i) %>% dplyr::select(X, Y, Id) %>% 
+    unique %>% 
+    group_by(Id) %>% 
+    summarise(Obs = n(), 
+              X = mean(X, na.rm = T), 
+              Y = mean(Y, na.rm = T)) %>% 
+    filter(Obs > 5) %>% 
+    pull(Id)
+  
+  if(length(MCPIndividuals)>0){
+    
+    MCPIndividuals %>% 
+      
+      lapply(function(a){
+        
+        print(a)
+        ObservationDF %>% 
+          filter(Id == a, Year == i) %>% 
+          dplyr::select(X, Y) %>% na.omit %>% 
+          SpatialPoints %>% mcp
+        
+      }) -> MCPList
+    
+    names(MCPList) <- MCPIndividuals
+    
+    MCPListList[[i]] <- MCPList
+    
+    AnnualAreas <- 
+      MCPList %>% map_dbl(~.x$area) %>% as.data.frame() %>% 
+      rownames_to_column("Id") %>% rename(Area = 2)
+    
+    AreaList[[i]] <- AnnualAreas
+    
+    ZeroAreas <- AnnualAreas %>% filter(Area == 0) %>% pull(Id)
+    
+    Dyads <- expand.grid(Id1 = MCPIndividuals %>% setdiff(ZeroAreas), 
+                         Id2 = MCPIndividuals %>% setdiff(ZeroAreas))
+    
+    if(nrow(Dyads) > 0){
+      
+      Dyads %>% 
+        t %>% data.frame %>% 
+        map(~MCPOverlap(MCPList[MCPIndividuals %>% setdiff(ZeroAreas) %>% as.character], .x %>% unlist %>% as.character, Symmetrical = T)) %>% 
+        unlist %>% 
+        matrix(nrow = length(MCPIndividuals %>% setdiff(ZeroAreas))) ->
+        AnnualHRO
+      
+      dimnames(AnnualHRO) <- list(MCPIndividuals %>% setdiff(ZeroAreas), 
+                                  MCPIndividuals %>% setdiff(ZeroAreas))
+      
+      HROList[[i]] <- AnnualHRO
+      
+    }
+    
+  }else{
+    
+    HROList[[i]] <- list()
+    AreaList[[i]] <- list()
+    
+  }
+}
+
+names(MCPListList) <- 
+  names(AreaList) <- 
+  names(HROList) <- FocalSites
+
+saveRDS(MCPListList, glue("Datasets/{FocalSystem}/Intermediate/MCPList.rds"))
+
+FullSpatialList <-
+  list(AnnualDistance = AnnualDistances,
+       AnnualHRO = HROList,
+       AnnualAreas = AreaList)
+
+FullSpatialList %>% saveRDS(glue("Datasets/{FocalSystem}/Intermediate/FullSpatialList.rds"))
+
+# Joining Spatial and Social Node Traits #####
+
+AreaList <- AreaList[which((AreaList %>% map(length))>0)]
+
+if(length(AreaList)>0){
+  
+  NodeDF <-
+    AreaList %>% bind_rows(.id = "Year") %>% mutate_at("Year", as.numeric) %>% 
+    mutate_at("Id", as.numeric) %>% 
+    full_join(NodeDF, ., by = c("Year", "Id"))
+  
+}
+
+NodeDF %>% dplyr::select(Year, Id) %>% 
+  # unique %>%
+  nrow
+
+NodeDF %>% saveRDS(glue("Datasets/{FocalSystem}/Intermediate/CleanData.rds"))
+
+NodeDF <-
+  readRDS(glue("Datasets/{FocalSystem}/Intermediate/CleanData.rds"))
+
+NodeDF %>% filter(ContactType == "Mate") %>% 
+  is.na %>% colSums
+
+NodeDF %>% 
+  filter(ContactType == "Fight") %>% 
+  group_by(Year) %>% summarise_at(c("Density.Annual", "Associations"), ~Prev(is.na(.x)))
