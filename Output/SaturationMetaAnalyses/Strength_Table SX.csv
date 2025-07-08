@@ -1,0 +1,4 @@
+"X","Predictor","K","AICc","R2","Delta","wi"
+"1","Portion + Behaviour + Portion:Behaviour + NID + Area + NYears",7,-13.2390716973225,0.24907360453097,0,0.56
+"2","Portion + Behaviour + NID + Area + NYears",6,-12.7464664816959,0.243126138702357,0.49,0.44
+NA,"Portion + Behaviour + NID + Area + NYears - Phylo",6,3.01127643615859,0.274625912725466,16.25,0

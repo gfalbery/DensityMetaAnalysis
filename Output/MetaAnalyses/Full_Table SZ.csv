@@ -1,0 +1,65 @@
+"","Formula","Coef","Beta","Se","Z","P","Ci.lb","Ci.ub"
+"1","Intercept","intrcpt",0.33,0.03,10.39,0,0.27,0.39
+"2","Phylogeny","intrcpt",0.33,0.05,6.1,0,0.22,0.43
+"3","Behaviour + HostGroup + NID + Area + NYears","intrcpt",0.29,0.08,3.86,0,0.14,0.44
+"4","Behaviour + HostGroup + NID + Area + NYears","BehaviourIndirect",0.26,0.05,4.97,0,0.16,0.36
+"5","Behaviour + HostGroup + NID + Area + NYears","HostGroupCarnivore",-0.06,0.11,-0.58,0.56,-0.27,0.15
+"6","Behaviour + HostGroup + NID + Area + NYears","HostGroupCetacean",-0.18,0.11,-1.67,0.09,-0.4,0.03
+"7","Behaviour + HostGroup + NID + Area + NYears","HostGroupEctotherm",-0.11,0.1,-1.08,0.28,-0.3,0.09
+"8","Behaviour + HostGroup + NID + Area + NYears","HostGroupLargeHerbivore",-0.05,0.1,-0.49,0.62,-0.24,0.14
+"9","Behaviour + HostGroup + NID + Area + NYears","HostGroupShark",0.01,0.13,0.06,0.95,-0.24,0.26
+"10","Behaviour + HostGroup + NID + Area + NYears","HostGroupSmallMammal",-0.23,0.1,-2.25,0.02,-0.43,-0.03
+"11","Behaviour + HostGroup + NID + Area + NYears","NID",0,0,-0.94,0.35,0,0
+"12","Behaviour + HostGroup + NID + Area + NYears","Area",0.01,0.02,0.34,0.73,-0.03,0.04
+"13","Behaviour + HostGroup + NID + Area + NYears","NYears",0,0,1.64,0.1,0,0.01
+"14","Behaviour + NID + Area + NYears","intrcpt",0.19,0.05,3.97,0,0.1,0.29
+"15","Behaviour + NID + Area + NYears","BehaviourIndirect",0.26,0.05,5.01,0,0.16,0.37
+"16","Behaviour + NID + Area + NYears","NID",0,0,-1.23,0.22,0,0
+"17","Behaviour + NID + Area + NYears","Area",0.02,0.01,1.24,0.21,-0.01,0.04
+"18","Behaviour + NID + Area + NYears","NYears",0,0,1.87,0.06,0,0.01
+"19","Behaviour + HostGroup + NID","intrcpt",0.31,0.08,4.07,0,0.16,0.46
+"20","Behaviour + HostGroup + NID","BehaviourIndirect",0.26,0.05,5.05,0,0.16,0.37
+"21","Behaviour + HostGroup + NID","HostGroupCarnivore",0,0.1,0.02,0.98,-0.19,0.2
+"22","Behaviour + HostGroup + NID","HostGroupCetacean",-0.12,0.1,-1.24,0.22,-0.31,0.07
+"23","Behaviour + HostGroup + NID","HostGroupEctotherm",-0.1,0.1,-1.08,0.28,-0.29,0.08
+"24","Behaviour + HostGroup + NID","HostGroupLargeHerbivore",0.01,0.09,0.08,0.94,-0.17,0.18
+"25","Behaviour + HostGroup + NID","HostGroupShark",0.01,0.13,0.11,0.91,-0.24,0.27
+"26","Behaviour + HostGroup + NID","HostGroupSmallMammal",-0.24,0.09,-2.61,0.01,-0.43,-0.06
+"27","Behaviour + HostGroup + NID","NID",0,0,-0.43,0.67,0,0
+"28","Behaviour + HostGroup + Area","intrcpt",0.3,0.08,3.99,0,0.15,0.45
+"29","Behaviour + HostGroup + Area","BehaviourIndirect",0.27,0.05,5.21,0,0.17,0.37
+"30","Behaviour + HostGroup + Area","HostGroupCarnivore",-0.01,0.1,-0.08,0.94,-0.21,0.19
+"31","Behaviour + HostGroup + Area","HostGroupCetacean",-0.13,0.1,-1.26,0.21,-0.34,0.07
+"32","Behaviour + HostGroup + Area","HostGroupEctotherm",-0.1,0.1,-0.96,0.34,-0.29,0.1
+"33","Behaviour + HostGroup + Area","HostGroupLargeHerbivore",0,0.09,-0.01,0.99,-0.18,0.18
+"34","Behaviour + HostGroup + Area","HostGroupShark",0.01,0.13,0.1,0.92,-0.24,0.26
+"35","Behaviour + HostGroup + Area","HostGroupSmallMammal",-0.24,0.1,-2.36,0.02,-0.44,-0.04
+"36","Behaviour + HostGroup + Area","Area",0.01,0.02,0.32,0.75,-0.03,0.04
+"37","Behaviour + HostGroup + NYears","intrcpt",0.29,0.07,3.91,0,0.14,0.44
+"38","Behaviour + HostGroup + NYears","BehaviourIndirect",0.27,0.05,5.27,0,0.17,0.37
+"39","Behaviour + HostGroup + NYears","HostGroupCarnivore",-0.05,0.1,-0.46,0.65,-0.25,0.15
+"40","Behaviour + HostGroup + NYears","HostGroupCetacean",-0.16,0.1,-1.58,0.11,-0.35,0.04
+"41","Behaviour + HostGroup + NYears","HostGroupEctotherm",-0.12,0.09,-1.28,0.2,-0.31,0.06
+"42","Behaviour + HostGroup + NYears","HostGroupLargeHerbivore",-0.04,0.09,-0.39,0.69,-0.22,0.15
+"43","Behaviour + HostGroup + NYears","HostGroupShark",0.02,0.13,0.15,0.88,-0.23,0.27
+"44","Behaviour + HostGroup + NYears","HostGroupSmallMammal",-0.26,0.09,-2.93,0,-0.44,-0.09
+"45","Behaviour + HostGroup + NYears","NYears",0,0,1.37,0.17,0,0.01
+"46","Behaviour + NYears","intrcpt",0.18,0.06,3.3,0,0.07,0.29
+"47","Behaviour + NYears","BehaviourIndirect",0.27,0.05,5.33,0,0.17,0.38
+"48","Behaviour + NYears","NYears",0,0,1.64,0.1,0,0.01
+"49","Behaviour + HostGroup","intrcpt",0.3,0.07,4.08,0,0.16,0.45
+"50","Behaviour + HostGroup","BehaviourIndirect",0.27,0.05,5.24,0,0.17,0.37
+"51","Behaviour + HostGroup","HostGroupCarnivore",0,0.1,-0.01,0.99,-0.19,0.19
+"52","Behaviour + HostGroup","HostGroupCetacean",-0.12,0.1,-1.24,0.22,-0.31,0.07
+"53","Behaviour + HostGroup","HostGroupEctotherm",-0.11,0.09,-1.12,0.26,-0.29,0.08
+"54","Behaviour + HostGroup","HostGroupLargeHerbivore",0,0.09,0.04,0.96,-0.17,0.18
+"55","Behaviour + HostGroup","HostGroupShark",0.02,0.13,0.13,0.9,-0.23,0.27
+"56","Behaviour + HostGroup","HostGroupSmallMammal",-0.25,0.09,-2.81,0,-0.43,-0.08
+"57","Behaviour + Area","intrcpt",0.21,0.04,5.23,0,0.13,0.29
+"58","Behaviour + Area","BehaviourIndirect",0.28,0.05,5.33,0,0.18,0.38
+"59","Behaviour + Area","Area",0.02,0.01,1.9,0.06,0,0.05
+"60","Behaviour + NID","intrcpt",0.23,0.05,4.43,0,0.13,0.34
+"61","Behaviour + NID","BehaviourIndirect",0.27,0.05,5.01,0,0.16,0.37
+"62","Behaviour + NID","NID",0,0,-0.91,0.37,0,0
+"63","Behaviour","intrcpt",0.22,0.06,4.01,0,0.11,0.33
+"64","Behaviour","BehaviourIndirect",0.28,0.05,5.3,0,0.17,0.38

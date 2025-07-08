@@ -1,0 +1,17 @@
+"","Formula","Coef","Beta","Se","Z","P","Ci.lb","Ci.ub"
+"1","Intercept","intrcpt",0.22,0.03,6.35,0,0.15,0.28
+"2","Phylogeny","intrcpt",0.22,0.05,4.12,0,0.12,0.33
+"3","HostGroup + NID + Area + NYears","intrcpt",0.26,0.08,3.34,0,0.11,0.41
+"4","HostGroup + NID + Area + NYears","HostGroupCarnivore",-0.11,0.11,-1.03,0.3,-0.33,0.1
+"5","HostGroup + NID + Area + NYears","HostGroupCetacean",-0.14,0.11,-1.25,0.21,-0.37,0.08
+"6","HostGroup + NID + Area + NYears","HostGroupEctotherm",-0.12,0.11,-1.13,0.26,-0.33,0.09
+"7","HostGroup + NID + Area + NYears","HostGroupLargeHerbivore",-0.1,0.1,-0.99,0.32,-0.31,0.1
+"8","HostGroup + NID + Area + NYears","HostGroupShark",0.09,0.12,0.75,0.46,-0.15,0.34
+"9","HostGroup + NID + Area + NYears","HostGroupSmallMammal",-0.2,0.1,-1.92,0.05,-0.4,0
+"10","HostGroup + NID + Area + NYears","NID",0,0,-0.86,0.39,0,0
+"11","HostGroup + NID + Area + NYears","Area",0.02,0.02,0.99,0.32,-0.02,0.05
+"12","HostGroup + NID + Area + NYears","NYears",0.01,0,2.49,0.01,0,0.01
+"13","NID + Area + NYears","intrcpt",0.16,0.04,4.18,0,0.09,0.24
+"14","NID + Area + NYears","NID",0,0,-1.29,0.2,0,0
+"15","NID + Area + NYears","Area",0.03,0.01,1.86,0.06,0,0.05
+"16","NID + Area + NYears","NYears",0.01,0,2.33,0.02,0,0.01

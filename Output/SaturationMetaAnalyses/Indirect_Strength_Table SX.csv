@@ -1,0 +1,7 @@
+"Predictor","K","AICc","R2","X","Delta","wi"
+"Intercept",1,31.3210313781877,0,NA,0,0.71
+"Phylogeny",1,33.7742111029216,0,NA,2.45,0.21
+"Portion + NID + Area + NYears",5,35.7709314119547,0.0675171264064708,"2",4.45,0.08
+"NID + Area + NYears",4,40.5642310142177,0,"4",9.24,0.01
+"Portion + HostGroup + NID + Area + NYears",11,52.7297818463194,0.0081856311087688,"1",21.41,0
+"HostGroup + NID + Area + NYears",10,57.0236868116619,0,"3",25.7,0

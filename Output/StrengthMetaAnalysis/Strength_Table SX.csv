@@ -1,0 +1,5 @@
+"","Predictor","K","AICc","R2","Delta","wi"
+"1","Behaviour + NID + Area + NYears - Phylo",5,-8.27250455509352,0.367505098350716,0,0.79
+"2","Behaviour + NID + Area + NYears",5,-5.55738792725025,0.367504303134573,2.72,0.2
+"3","Behaviour + HostGroup + NID + Area + NYears",11,2.18494234301556,0.406418898848186,10.46,0
+"4","HostGroup + NID + Area + NYears",10,23.3285251910324,0.131477339268993,31.6,0
