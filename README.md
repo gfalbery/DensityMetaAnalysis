@@ -17,7 +17,7 @@ Albery, G.F., et al. (2025). Density-dependent network structuring within and ac
 
 Species Scripts/                          # Contains the specific scripts to process all the different systems' datasets.
 
-R/
+R/  
 ├── 00_DanFunctions.R                     # Helper functions used for the meta-analysis  
 ├── 00_Phylopic Setup.R                   # Downloads and prepares animal silhouettes for figures
 
