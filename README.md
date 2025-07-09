@@ -18,28 +18,28 @@ Albery, G.F., et al. (2025). Density-dependent network structuring within and ac
 Species Scripts/                          # Contains the specific scripts to process all the different systems' datasets.
 
 R/
-├── 00_DanFunctions.R                     # Helper functions used for the meta-analysis
+├── 00_DanFunctions.R                     # Helper functions used for the meta-analysis  
 ├── 00_Phylopic Setup.R                   # Downloads and prepares animal silhouettes for figures
 
-├── 01_Summarising System Replicates.R   # Aggregates system-level data and replicates
+├── 01_Summarising System Replicates.R   # Aggregates system-level data and replicates  
 ├── 01b_Calculating Proportion Area Overlap.R   # Calculates spatial overlap metrics for density validation
 
-├── 02a_Linear Models.R                   # Fits linear models to system-level data
-├── 02b_GAMMs.R                           # Fits Generalized Additive Mixed Models
+├── 02a_Linear Models.R                   # Fits linear models to system-level data  
+├── 02b_GAMMs.R                           # Fits Generalized Additive Mixed Models  
 ├── 02c_Inflection Models.R               # Fits different models to different inflection points
 
-├── 03a_Summarising Linear Models.R      # Extracts and summarises linear model results
-├── 03b_Summarising GAMMs.R              # Extracts and summarises GAMM outputs
+├── 03a_Summarising Linear Models.R      # Extracts and summarises linear model results  
+├── 03b_Summarising GAMMs.R              # Extracts and summarises GAMM outputs  
 ├── 03c_Summarising Inflection Models.R  # Extracts and summarises inflection point analyses
 
 ├── 04_Combining Summary Data.R          # Merges outputs from all systems for meta-analysis
 
-├── 05a_Meta-Analysis.R                  # Runs phylogenetic meta-analysis on linear model slopes
-├── 05b_Saturation Meta-Analysis.R       # Meta-analysis of GAMM smooths for saturation effects
-├── 05c_Full Saturation Meta-Analysis.R  # Extended saturation analysis across contact types
+├── 05a_Meta-Analysis.R                  # Runs phylogenetic meta-analysis on linear model slopes  
+├── 05b_Saturation Meta-Analysis.R       # Meta-analysis of GAMM smooths for saturation effects  
+├── 05c_Full Saturation Meta-Analysis.R  # Extended saturation analysis across contact types  
 ├── 05d_Strength Meta-Analysis.R         # Meta-analysis of network strength
 
-├── 06a_Figures.R                        # Generates manuscript figures
+├── 06a_Figures.R                        # Generates manuscript figures  
 ├── 06b_Density Schematic.R              # Creates schematic figure of density-network relationships
 
 ├── 07_Results.R                         # Formats key statistics and effect sizes for reporting
